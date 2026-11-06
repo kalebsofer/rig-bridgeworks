@@ -1,6 +1,3 @@
-# Client extracts stay out of git, treated as personal data.
-/docs/pack/**/*.csv
-
 # Machine-local harness state
 /.claude/settings.local.json
 /.claude/worktrees/
