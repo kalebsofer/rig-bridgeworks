@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "autoMemoryDirectory": "~/Code/rig-bridgeworks/.claude/memory",
+  "permissions": {
+    "allow": [
+      "Bash(uv run *)",
+      "Bash(uv sync *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)"
+    ],
+    "deny": [
+      "Read(//c/Users/kaleb/Code/rig-day/**)",
+      "Read(//c/Users/kaleb/Code/rig-day-sealed/**)",
+      "Read(//c/Users/kaleb/Code/rig-scenario/**)",
+      "Read(~/.claude/projects/C--Users-kaleb-Code-rig-day/**)",
+      "Read(~/.claude/projects/C--Users-kaleb-Code-rig-scenario/**)",
+      "Edit(./docs/pack/**)",
+      "mcp__db-query",
+      "mcp__expo-mcp",
+      "mcp__canva",
+      "mcp__claude-in-chrome",
+      "mcp__claude_ai_Claude_Docs",
+      "mcp__claude_ai_Gmail",
+      "mcp__claude_ai_Google_Drive",
+      "mcp__claude_ai_Google_Docs",
+      "mcp__claude_ai_Google_Sheets",
+      "mcp__claude_ai_Google_Calendar",
+      "mcp__claude_ai_Render",
+      "mcp__claude_ai_Sentry",
+      "mcp__claude_ai_Adspirer_Ads_Performance_Marketing_Agent",
+      "mcp__claude_ai_Higgsfield"
+    ],
+    "additionalDirectories": ["C:/Users/kaleb/Code/agent-config/context"],
+    "blockReadsOutsideWorkingDirectories": true,
+    "blockWritesOutsideWorkingDirectories": true
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": false,
+    "figma@claude-plugins-official": false,
+    "expo@expo-plugins": false
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob|Bash|PowerShell|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "worktree": { "bgIsolation": "none" }
+}

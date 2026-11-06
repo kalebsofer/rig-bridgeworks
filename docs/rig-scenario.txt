@@ -1,0 +1,129 @@
+For this exercise, do not complete any of the key tasks without my say, you are my assistant, and I am demonstrating how I work with AI to complete  work through scenarios such as this. 
+## The scenario
+
+I'm a forward deployed engineer. On the morning of the exercise I take over the BridgeWorks account from a colleague who is moving to another client. The client's steering group meets the next morning, and they expect a status update from Rig before then.
+
+BridgeWorks is a UK social-mobility charity. It has about 45 staff and supports about 3,000 students a year from low-income backgrounds into professional careers. Corporate funders back it and receive impact dashboards.
+
+Why Rig is there: to audit and classify the legacy data, certify the key metrics, reproduce the Power BI numbers independently, and recommend a cleanup, so that the migration to the new CRM is built on data the charity can trust.
+
+Who I'll deal with (role-played by us):
+
+| Person       | Role                                                           |
+| ------------ | -------------------------------------------------------------- |
+| Helen Marsh  | COO and executive sponsor, owns the Rig contract               |
+| Dana Okafor  | Impact & Data Manager, owns the metric dictionary and Power BI |
+| Ruth Adebayo | Director of Data & Systems                                     |
+
+I inherit what I'd really get on a live account: about five months of auto-generated meeting summaries, a handover note and some Slack messages. It's long, somewhat repetitive, and not all of it is right.
+
+## The parts of the exercise
+
+1. Read the pack.
+2. A weekly call with BridgeWorks, role-played. It's my first call as account owner.
+3. A technical task on synthetic extracts of the client's data.
+4. A status update for the next morning's steering group, which I then present to the "client".
+5. A debrief with us.
+
+As on a real account, things may change along the way.
+
+I hand in:
+
+1. A status update to BridgeWorks. An email or 1–3 slides, written for the client.
+2. My technical work. Code or a notebook, plus a one-page summary for Rig colleagues.
+
+## Technical context
+
+### The stack
+
+| Layer                | What it is                                                                                                               | Who runs it                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| Atlas                | Bespoke legacy CRM (PHP + MySQL) with a few hundred tables. The system of record for students and their programme stage. | An external dev shop                                 |
+| Databricks lakehouse | Mirrors part of Atlas through a nightly ETL. Some tables are loaded as full nightly copies, one per day.                 | Northpoint Data, an outsourced data-engineering firm |
+| Power BI             | Eight core dashboards that funders see. Currently treated as the source of truth for reported numbers.                   | BridgeWorks (Dana)                                   |
+| Zoho CRM             | The new CRM, with go-live targeted for mid-2027. The sandbox caps the number of records per module.                      | Kestrel Digital, the implementation partner          |
+| Rig                  | Read access to the lakehouse, a context layer over it, and certified metric definitions.                                 | Us                                                   |
+
+Constraints that shape the work:
+
+- Rig has read-only access to the lakehouse.
+- Rig doesn't delete or change anything itself. Changes are carried out by Northpoint and approved by the client.
+
+### What the data task looks like
+
+I get synthetic CSV extracts shaped like the client's real tables. There are no real people in them. The largest file is about 13 MB and under 200k rows.
+
+The extracts:
+
+- A student records export from the CRM: identifiers, contact details, university, demographics.
+- The CRM's current programme stage for each student and programme.
+- The lakehouse's nightly copies of that stage table, one per snapshot date.
+- An export from a third-party platform the programme team uses.
+- An extract of the target data model agreed for the Zoho migration.
+
+The questions are in the spirit of:
+
+- How big is this, and how big should it be?
+- Is a proposed cleanup safe? Back the answer with numbers.
+- Can I reconstruct what happened over time, and how do I know it's right?
+- Should a new data source go into the new CRM yet? Give a go / no-go, with conditions and owners.
+- (Stretch) What blocks a clean mapping onto the target model?
+
+Use any tools I like, including AI assistants. We'll ask what I delegated to them and what I checked myself.
+
+### Things worth being fluent in
+
+I don't need to study for these, but they're the tools the task rewards.
+
+SQL over files.
+
+- DuckDB (`SELECT * FROM 'data/file.csv'`) or pandas.
+- Window functions (`LAG` / `LEAD`, `ROW_NUMBER`) and `GROUP BY` / `HAVING`.
+- Anti-joins.
+
+Working with history.
+
+- The difference between snapshot tables (a full copy per day) and change logs or slowly changing dimensions (SCD type 2: one row per version, with `valid_from` and `valid_to`).
+- Turning one into the other, and testing that the result matches the source.
+
+Databricks basics.
+
+- Delta tables, workspaces, scheduled jobs.
+- What a nightly full-copy load does to storage and run time.
+
+Messy identity and joins.
+
+- Keys that aren't as unique as they look.
+- Joining two systems on email.
+- Normalisation, match rates and fan-out.
+
+Data hygiene.
+
+- Mixed date formats.
+- Duplicate loads and missing days.
+- Free-text fields.
+
+Data protection.
+
+- UK GDPR basics.
+- Special-category data, such as ethnicity, religion and health.
+- What it means to move personal data into a new system or put it in front of AI tools.
+
+Validation. How I'd convince a sceptical client that a number is right.
+
+### Zoho CRM vocabulary 
+Zoho CRM organises data into modules: standard ones such as Contacts and Accounts, plus custom modules (for example Programmes, Enrolments and Sessions). Each record in a module has fields, and records link to each other through lookup fields. Data is usually loaded with the import tool or the API, and tested first in a sandbox. A 10-minute skim of the Zoho CRM docs on modules and lookups is plenty.
+
+## What we're looking for
+
+Roughly 70% how I handle the client and the project, 30% technical.
+
+- Judgement over volume. A short, correct, well-prioritised update beats a long one.
+- Grounding. Claims backed by the data or the record, with uncertainty stated plainly.
+- Ownership. Asks that come with an owner and a date, and decisions put to the person who can make them.
+- Client tone. Clear and direct, without making anyone look bad.
+- Asking questions. Asking the right person the right question is part of the job.
+
+## Background reading 
+
+\- [https://docs.rig.so](https://docs.rig.so?utm_source=chatgpt.com) covers what Rig does and how the context layer works.
